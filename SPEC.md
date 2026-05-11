@@ -34,8 +34,9 @@ Fire Calculator India/
     ├── ContentView.swift               ← NavigationStack root, AppRoute enum
     ├── FIREModels.swift                ← ALL data models, calculator, formatting, colors
     ├── InputScreen.swift               ← Screen 1: user inputs
-    ├── ResultScreen.swift              ← Screen 2: FIRE numbers & metrics
+    ├── ResultScreen.swift              ← Screen 2: FIRE numbers & metrics + share button
     ├── InvestmentScreen.swift          ← Screen 3: SIP plan & allocation
+    ├── FIRESummaryCard.swift           ← Shareable summary card (rendered via ImageRenderer)
     ├── LaunchScreen.swift              ← Custom launch screen (shown 1.2s on cold open)
     └── Assets.xcassets/
         ├── AppIcon.appiconset/
@@ -302,6 +303,8 @@ Inner radius = 58% of outer radius. Starts at top (−π/2).
 
 **Key behaviour:** Has a local `@State private var retirementAge: Double` independent from `inputs.retirementAge`. The adjust-card slider changes only this local value, updating `result` live without writing back to inputs. This is intentional — the user can explore "what if I retire at 55?" without losing their original input.
 
+**Toolbar:** Share button (top-right) renders `FIRESummaryCard` via `ImageRenderer` into a `UIImage` and presents it through a `UIActivityViewController` sheet (`ShareSheet` wrapper at bottom of file).
+
 **Cards (top to bottom):**
 1. `expenseProjectionCard` — today's vs retirement monthly expense side-by-side
 2. `fireVariantsCard` — all three FIRE numbers (Lean / FIRE / Fat) with the FIRE variant highlighted as PRIMARY
@@ -402,10 +405,11 @@ These are deliberate omissions — do not add without discussion:
 - Save to `UserDefaults` using a `@AppStorage`-backed wrapper, or write to a JSON file in the Documents directory
 - Restore in `ContentView.init()` or via `.onAppear`
 
-### 10.6 Adding share / export
+### 10.6 Share / Export (already implemented)
 
-- Render a summary `View` and use `ImageRenderer` (iOS 16+) to produce a `UIImage`
-- Present via `ShareLink` (iOS 16+) — no UIKit needed
+- `FIRESummaryCard.swift` — a 360pt-wide `View` showing FIRE number, SIP, corpus, expenses, and a footer with age/inflation context
+- `ResultScreen` renders it via `ImageRenderer` on share button tap → presents `UIActivityViewController` via `ShareSheet` (a `UIViewControllerRepresentable` at the bottom of `ResultScreen.swift`)
+- To update the card design: edit `FIRESummaryCard.swift` only
 
 ---
 

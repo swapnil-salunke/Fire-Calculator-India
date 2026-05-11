@@ -1,10 +1,14 @@
 import SwiftUI
 
+import SwiftUI
+
 struct ResultScreen: View {
     @Binding var inputs: FIREInputs
     var onSeeInvestment: () -> Void
 
     @State private var retirementAge: Double
+    @State private var shareImage: UIImage? = nil
+    @State private var isSharing = false
 
     init(inputs: Binding<FIREInputs>, onSeeInvestment: @escaping () -> Void) {
         self._inputs = inputs
@@ -48,6 +52,34 @@ struct ResultScreen: View {
         )
         .toolbarBackground(.visible, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    renderAndShare()
+                } label: {
+                    Image(systemName: isSharing ? "ellipsis" : "square.and.arrow.up")
+                        .font(.subheadline.bold())
+                }
+                .disabled(isSharing)
+            }
+        }
+        .sheet(item: $shareImage) { image in
+            ShareSheet(image: image)
+        }
+    }
+
+    // MARK: - Share
+
+    @MainActor
+    private func renderAndShare() {
+        isSharing = true
+        let card = FIRESummaryCard(result: result, inputs: inputs)
+        let renderer = ImageRenderer(content: card)
+        renderer.scale = 3
+        if let uiImage = renderer.uiImage {
+            shareImage = uiImage
+        }
+        isSharing = false
     }
 
     // MARK: - Expense Projection Card
@@ -311,4 +343,22 @@ struct ResultScreen: View {
             .background(Color(.systemGroupedBackground))
         }
     }
+}
+
+// MARK: - UIImage Identifiable (for .sheet(item:))
+
+extension UIImage: @retroactive Identifiable {
+    public var id: ObjectIdentifier { ObjectIdentifier(self) }
+}
+
+// MARK: - ShareSheet
+
+private struct ShareSheet: UIViewControllerRepresentable {
+    let image: UIImage
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: [image], applicationActivities: nil)
+    }
+
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }

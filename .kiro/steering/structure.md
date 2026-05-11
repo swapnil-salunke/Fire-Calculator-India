@@ -11,8 +11,9 @@ Fire Calculator India/
 ├── ContentView.swift               — NavigationStack root, AppRoute enum
 ├── FIREModels.swift                — ALL models, calculator, colors, formatting
 ├── InputScreen.swift               — Screen 1: user inputs form
-├── ResultScreen.swift              — Screen 2: FIRE numbers + metrics
+├── ResultScreen.swift              — Screen 2: FIRE numbers + metrics + share toolbar button
 ├── InvestmentScreen.swift          — Screen 3: SIP plan + allocation
+├── FIRESummaryCard.swift           — Shareable summary card (rendered via ImageRenderer)
 └── LaunchScreen.swift              — Custom launch screen view
 ```
 
@@ -44,6 +45,10 @@ All of the following live here and ONLY here:
 - `Color` extensions: `Color(hex:)` init + all named colors
 
 Never scatter model code into view files.
+
+## Investigation Rule
+
+Always trace end-to-end flows before drawing conclusions. When a new or changed file is observed, read every file that could plausibly reference it before commenting on whether something is wired up or missing.
 
 ## Architecture Rules
 - `FIRECalculator.calculate()` must stay a **pure static function** — no side effects, no state

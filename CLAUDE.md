@@ -7,6 +7,11 @@
 
 Native iOS SwiftUI app. India-specific FIRE (Financial Independence, Retire Early) calculator. No backend, no third-party packages, fully offline.
 
+## Investigation Rules
+
+- **Always trace end-to-end flows before drawing conclusions.** When a new or changed file is observed, read every file that could plausibly reference it — screens, entry points, models — before commenting on whether something is wired up, connected, or missing.
+- Never state that a feature is "not connected" or "needs to be wired up" without having verified all referencing files first.
+
 ## Hard Rules
 
 - **Zero external dependencies.** Never add a Swift Package or CocoaPod. Every feature must be built with SwiftUI + Foundation only.

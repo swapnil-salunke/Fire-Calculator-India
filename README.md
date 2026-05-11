@@ -15,6 +15,7 @@ A native iOS app to calculate your **Financial Independence, Retire Early (FIRE)
 - **Monthly SIP calculator** — exact amount needed to hit your FIRE number
 - **Investment allocation breakdown** — Equity, Debt, Gold, Emergency with recommended vehicles
 - **Custom donut chart** — visual allocation breakdown, no third-party dependencies
+- **Share your FIRE summary** — one-tap share card with FIRE number, SIP, corpus, and expense projection
 
 ## Screens
 

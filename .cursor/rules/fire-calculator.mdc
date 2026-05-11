@@ -1,11 +1,23 @@
-# GitHub Copilot Instructions — FIRE Calculator India
+---
+description: Rules for FIRE Calculator India iOS app
+globs: ["**/*.swift"]
+alwaysApply: true
+---
+
+# FIRE Calculator India — Cursor Rules
 
 Read SPEC.md for full architecture, data models, design system, and extension points.
 
+## Investigation
+
+- Always trace end-to-end flows before drawing conclusions. When a new or changed file is observed, read every file that could plausibly reference it before commenting on whether something is wired up or missing.
+
 ## Project
+
 Native iOS SwiftUI app. FIRE (Financial Independence, Retire Early) calculator for India. No backend, no third-party packages.
 
 ## Files
+
 - `FIREModels.swift` — all models, calculator, colors, formatting. Add new model code here only.
 - `ContentView.swift` — NavigationStack root + AppRoute enum.
 - `InputScreen.swift` — Screen 1: user inputs.
@@ -15,40 +27,43 @@ Native iOS SwiftUI app. FIRE (Financial Independence, Retire Early) calculator f
 - `LaunchScreen.swift` — Custom launch screen, shown 1.2s then fades out.
 - New `.swift` files in `Fire Calculator India/` are auto-compiled (no pbxproj edits needed).
 
-## Investigation
+## Architecture Rules
 
-- Always trace end-to-end flows before drawing conclusions. When a new or changed file is observed, read every file that could plausibly reference it before commenting on whether something is wired up or missing.
+- `FIREInputs` is `@Binding` through all screens — single source of truth.
+- `FIRECalculator.calculate()` is a pure static function. No side effects.
+- `InvestmentMode` / `FIRETarget` are local state on `InvestmentScreen` — never add to `FIREInputs`.
+- `ResultScreen` has a local `@State var retirementAge` for what-if adjustment — does not write back to `inputs.retirementAge`.
 
-## Key Rules
+## SwiftUI Rules
 
-**Architecture:**
-- `FIREInputs` is `@Binding` through all screens — the single source of truth.
-- `FIRECalculator.calculate()` is a pure static function. Never add state or side effects to it.
-- `InvestmentMode` / `FIRETarget` are local state on `InvestmentScreen` — never add them to `FIREInputs`.
-
-**SwiftUI:**
-- Use `onChange(of:) { _, newValue in }` — two-parameter form only (iOS 17+).
+- `onChange(of:) { _, newValue in }` — two-parameter form only (iOS 17+).
 - No force unwraps. Use `?? 0` / `?? ""` fallbacks.
-- All backgrounds use semantic colors: `Color(.systemGroupedBackground)`, `Color(.secondarySystemGroupedBackground)`.
+- All backgrounds: `Color(.systemGroupedBackground)` / `Color(.secondarySystemGroupedBackground)`.
 - Never hardcode white/black for backgrounds — dark mode must work.
 
-**Design:**
-- Primary color: `Color.fireIndigo` (#6366F1). Use for CTAs, sliders, active states.
-- All new colors must be added as `static let` on `Color` in `FIREModels.swift`.
+## Design
+
+- Primary color: `Color.fireIndigo` (#6366F1). CTAs, sliders, active states.
+- All new colors → `static let` on `Color` in `FIREModels.swift` only.
 - Every new screen needs the indigo→purple navigation bar gradient.
 - Cards: `.padding(16)` + `.background(Color(.secondarySystemGroupedBackground))` + `.cornerRadius(14)`.
 
-**Formatting:**
+## Formatting
+
 - Currency hero values: `.inrCompact` (e.g. ₹2.50 Cr).
 - Currency sub-labels: `.inrFull` (e.g. ₹2,50,00,000).
+- Never use raw `String(format:)` for currency in views.
 
-**India constants — do not change:**
+## India Constants — Do Not Change
+
 - Inflation default: 6%
-- FIRE multipliers: ×20 (Lean), ×25 (FIRE), ×33 (Fat FIRE)
+- FIRE multipliers: ×20 (Lean, 5% SWR), ×25 (FIRE, 4% SWR), ×33 (Fat FIRE, 3% SWR)
 - Returns: 9% conservative, 12% balanced, 14% aggressive
 
 ## Never
+
 - Add Swift packages, CocoaPods, or any external dependency.
 - Add networking or remote API calls.
 - Use Charts framework — donut chart uses Canvas.
 - Add persistence unless explicitly requested.
+- Edit project.pbxproj manually.
