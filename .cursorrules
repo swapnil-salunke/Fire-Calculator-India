@@ -1,0 +1,37 @@
+# FIRE Calculator India — Cursor Rules
+
+Read SPEC.md for full architecture. These rules take precedence.
+
+## Stack
+- SwiftUI + Foundation only. Zero external packages.
+- iOS 16+. No UIKit unless absolutely unavoidable.
+- PBXFileSystemSynchronizedRootGroup — new .swift files in `Fire Calculator India/` folder are auto-compiled.
+
+## Architecture
+- All models, calculator, colors, formatting → `FIREModels.swift` only.
+- `FIREInputs` is the single source of truth, passed as `@Binding`.
+- `FIRECalculator.calculate()` is a pure static function — keep it that way.
+- Navigation: `NavigationStack` + `AppRoute` enum in `ContentView.swift`.
+- `InvestmentMode` / `FIRETarget` → local `@State` on `InvestmentScreen` only, never in `FIREInputs`.
+
+## Design — Non-Negotiable
+- Colors: always use `.fireIndigo`, `.fireEmerald`, `.fireAmber`, `.fireSky`, `.fireRose`, `.firePurple`. Never raw hex in views.
+- Backgrounds: `Color(.systemGroupedBackground)` / `Color(.secondarySystemGroupedBackground)`. Never hardcoded white/black.
+- Every screen gets the indigo→purple navbar gradient (see SPEC.md §6.2).
+- Cards: `.padding(16)` + `.background(Color(.secondarySystemGroupedBackground))` + `.cornerRadius(14)`.
+- Primary CTA: sticky bottom, `Color.fireIndigo` fill, `.cornerRadius(14)`, `.padding(.vertical, 17)`.
+- Sliders: always `.tint(.fireIndigo)`.
+
+## Code Rules
+- `onChange` → always `{ _, newValue in }` (two-parameter, iOS 17+).
+- No force unwraps.
+- No comments on obvious code — only comment WHY.
+- `// MARK: - SectionName` in every file.
+- Currency display: `.inrCompact` for hero values, `.inrFull` for sub-labels.
+
+## Do Not
+- Add Swift packages or CocoaPods.
+- Add networking, analytics, or any remote calls.
+- Add persistence (UserDefaults, CoreData) unless explicitly asked.
+- Change FIRE multipliers (×20/×25/×33) or inflation default (6%) without updating SPEC.md.
+- Use the Charts framework — the donut chart uses Canvas intentionally.
