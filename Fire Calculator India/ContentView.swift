@@ -1,24 +1,39 @@
-//
-//  ContentView.swift
-//  Fire Calculator India
-//
-//  Created by Swapnil Salunke on 11/05/26.
-//
-
 import SwiftUI
 
 struct ContentView: View {
+    @State private var inputs = FIREInputs()
+    @State private var path = NavigationPath()
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationStack(path: $path) {
+            InputScreen(inputs: $inputs) {
+                path.append(AppRoute.result)
+            }
+            .navigationDestination(for: AppRoute.self) { route in
+                switch route {
+                case .result:
+                    ResultScreen(inputs: $inputs) {
+                        path.append(AppRoute.investment)
+                    }
+                case .investment:
+                    InvestmentScreen(inputs: $inputs)
+                }
+            }
         }
-        .padding()
+        .tint(.white)
     }
 }
 
-#Preview {
+enum AppRoute: Hashable {
+    case result
+    case investment
+}
+
+#Preview("Light") {
     ContentView()
+}
+
+#Preview("Dark") {
+    ContentView()
+        .preferredColorScheme(.dark)
 }
