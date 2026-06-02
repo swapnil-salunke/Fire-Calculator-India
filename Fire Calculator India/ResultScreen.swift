@@ -1,7 +1,5 @@
 import SwiftUI
 
-import SwiftUI
-
 struct ResultScreen: View {
     @Binding var inputs: FIREInputs
     var onSeeInvestment: () -> Void
