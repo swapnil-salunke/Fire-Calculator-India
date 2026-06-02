@@ -116,6 +116,7 @@ struct InvestmentScreen: View {
                     categoryCard(cat)
                 }
                 recommendationsCard
+                progressButton
                 disclaimerNote
             }
             .padding(.horizontal, 16)
@@ -437,6 +438,24 @@ struct InvestmentScreen: View {
                 .font(.caption)
                 .foregroundColor(.primary)
                 .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    // MARK: - Progress Button
+
+    var progressButton: some View {
+        NavigationLink(value: AppRoute.progress) {
+            HStack(spacing: 10) {
+                Image(systemName: "chart.bar.fill")
+                    .font(.subheadline)
+                Text("View FIRE Progress")
+                    .font(.subheadline.bold())
+            }
+            .foregroundColor(.fireIndigo)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .background(Color.fireIndigo.opacity(0.1))
+            .cornerRadius(14)
         }
     }
 

@@ -17,6 +17,8 @@ struct ContentView: View {
                     }
                 case .investment:
                     InvestmentScreen(inputs: $inputs)
+                case .progress:
+                    FIREProgressScreen(inputs: $inputs)
                 }
             }
         }
@@ -27,6 +29,7 @@ struct ContentView: View {
 enum AppRoute: Hashable {
     case result
     case investment
+    case progress
 }
 
 #Preview("Light") {

@@ -129,6 +129,45 @@ struct FIREResult {
     let yearsToRetirement: Int
 
     var isAlreadyFIRE: Bool { shortfall <= 0 }
+
+    // MARK: - Progress Tracker
+
+    var progressPercentage: Double {
+        guard fireNumber > 0 else { return 0 }
+        return min(100, max(0, (existingCorpusAtRetirement / fireNumber) * 100))
+    }
+
+    var motivationalStatus: String {
+        switch progressPercentage {
+        case 0...10:   return "Just started your FIRE journey"
+        case 11...25:  return "Building momentum"
+        case 26...50:  return "Halfway to your goal"
+        case 51...75:  return "In the home stretch"
+        case 76..<100: return "Almost there!"
+        default:       return "FIRE achieved! Retire with confidence"
+        }
+    }
+
+    var nextMilestonePercent: Int {
+        if progressPercentage < 25 { return 25 }
+        if progressPercentage < 50 { return 50 }
+        if progressPercentage < 75 { return 75 }
+        return 100
+    }
+
+    var projectedFIREDate: Date {
+        Calendar.current.date(byAdding: .year, value: yearsToRetirement, to: Date()) ?? Date()
+    }
+
+    var motivationalColor: Color {
+        switch progressPercentage {
+        case 0..<25:   return .fireSky
+        case 25..<50:  return .fireAmber
+        case 50..<75:  return .fireEmerald
+        case 75..<100: return .fireIndigo
+        default:       return .firePurple
+        }
+    }
 }
 
 // MARK: - Calculator
