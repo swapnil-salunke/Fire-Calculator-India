@@ -235,6 +235,88 @@ final class Fire_Calculator_IndiaUITests: XCTestCase {
         XCTAssertTrue(app.navigationBars["Your FIRE Plan"].waitForExistence(timeout: 3))
     }
 
+    // MARK: - FIRE Progress Screen
+
+    /// Navigating through InvestmentScreen to ProgressScreen shows the correct nav title.
+    @MainActor
+    func testProgressScreenLoads() throws {
+        navigateToProgressScreen()
+        XCTAssertTrue(app.navigationBars["FIRE Progress"].exists)
+    }
+
+    /// ProgressScreen shows the Corpus Progress bar card.
+    @MainActor
+    func testProgressScreenShowsProgressBarCard() throws {
+        navigateToProgressScreen()
+        // .textCase(.uppercase) → "CORPUS PROGRESS" in accessibility tree
+        XCTAssertTrue(app.staticTexts["CORPUS PROGRESS"].waitForExistence(timeout: 3))
+    }
+
+    /// ProgressScreen shows the FIRE target picker.
+    @MainActor
+    func testProgressScreenShowsFIRETargetPicker() throws {
+        navigateToProgressScreen()
+        XCTAssertTrue(app.staticTexts["FIRE TARGET"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.staticTexts["Lean FIRE"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["Fat FIRE"].waitForExistence(timeout: 2))
+    }
+
+    /// ProgressScreen shows the investment style picker.
+    @MainActor
+    func testProgressScreenShowsInvestmentStylePicker() throws {
+        navigateToProgressScreen()
+        XCTAssertTrue(app.staticTexts["INVESTMENT STYLE"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.staticTexts["Conservative"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["Balanced"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["Aggressive"].waitForExistence(timeout: 2))
+    }
+
+    /// ProgressScreen shows corpus breakdown and timeline cards.
+    @MainActor
+    func testProgressScreenShowsCorpusAndTimelineCards() throws {
+        navigateToProgressScreen()
+        // Scroll down to reveal cards below the pickers
+        app.swipeUp()
+        XCTAssertTrue(app.staticTexts["CORPUS BREAKDOWN"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.staticTexts["TIMELINE"].waitForExistence(timeout: 3))
+    }
+
+    /// ProgressScreen shows the motivational status card.
+    @MainActor
+    func testProgressScreenShowsStatusCard() throws {
+        navigateToProgressScreen()
+        app.swipeUp()
+        XCTAssertTrue(app.staticTexts["MOTIVATIONAL STATUS"].waitForExistence(timeout: 3))
+    }
+
+    /// Tapping FIRE target buttons on ProgressScreen does not crash.
+    @MainActor
+    func testProgressScreenFIRETargetPickerDoesNotCrash() throws {
+        navigateToProgressScreen()
+        app.staticTexts["Lean FIRE"].tap()
+        app.staticTexts["Fat FIRE"].tap()
+        app.staticTexts["FIRE"].tap()
+        XCTAssertTrue(app.navigationBars["FIRE Progress"].exists)
+    }
+
+    /// Tapping investment style buttons on ProgressScreen does not crash.
+    @MainActor
+    func testProgressScreenInvestmentStylePickerDoesNotCrash() throws {
+        navigateToProgressScreen()
+        app.staticTexts["Conservative"].tap()
+        app.staticTexts["Aggressive"].tap()
+        app.staticTexts["Balanced"].tap()
+        XCTAssertTrue(app.navigationBars["FIRE Progress"].exists)
+    }
+
+    /// Back from ProgressScreen returns to InvestmentScreen.
+    @MainActor
+    func testBackFromProgressScreenReturnsToInvestmentScreen() throws {
+        navigateToProgressScreen()
+        app.navigationBars.buttons.firstMatch.tap()
+        XCTAssertTrue(app.navigationBars["Investment Plan"].waitForExistence(timeout: 3))
+    }
+
     // MARK: - Helpers
 
     private func navigateToInvestmentScreen() {
@@ -242,6 +324,14 @@ final class Fire_Calculator_IndiaUITests: XCTestCase {
         XCTAssertTrue(app.navigationBars["Your FIRE Plan"].waitForExistence(timeout: 3))
         app.buttons["See Investment Plan"].tap()
         XCTAssertTrue(app.navigationBars["Investment Plan"].waitForExistence(timeout: 3))
+    }
+
+    private func navigateToProgressScreen() {
+        navigateToInvestmentScreen()
+        // "View FIRE Progress" is a NavigationLink — accessible as a staticText inside it
+        app.swipeUp()
+        app.staticTexts["View FIRE Progress"].tap()
+        XCTAssertTrue(app.navigationBars["FIRE Progress"].waitForExistence(timeout: 3))
     }
 }
 
